@@ -9,6 +9,12 @@
     font-size: 1.75;
     font-weight: bold;
     line-height: 34px;
+    transition: color 0.2s;
+    
+    &:hover {
+      cursor: pointer;
+      color: var(--pink-500);
+    }
   }
 
   p {
@@ -23,6 +29,10 @@
     color: var(--gray-200);
     span + span {
       margin-left: 2rem;
+    }
+
+    span > span {
+      margin-left: 0.5rem;
     }
   }
 
