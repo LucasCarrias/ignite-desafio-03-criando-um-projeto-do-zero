@@ -1,1 +1,18 @@
-// TODO
+.container {
+  color: #fff;
+  max-width: 720px;
+
+  h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 1.5625rem;
+  }
+
+  p + div {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+

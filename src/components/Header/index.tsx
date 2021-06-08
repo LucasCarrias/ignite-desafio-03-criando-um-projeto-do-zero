@@ -7,7 +7,7 @@ export default function Header(): JSX.Element {
   const router = useRouter();
 
   function handleClick(): void {
-    router.push('');
+    router.push('/');
   }
 
   return (
