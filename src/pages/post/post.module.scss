@@ -32,6 +32,9 @@
   .content {
     width: 700px;
     margin-top: 4rem;
+    padding-bottom: 3.75rem;
+
+    border-bottom: 1px solid var(--gray-200);
     
     div {
       h2 {
@@ -53,5 +56,9 @@
       }
     }
     
+  }
+
+  .comments {
+    margin-top: 5rem;
   }
 }

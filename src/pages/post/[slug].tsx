@@ -11,6 +11,8 @@ import { RichText } from 'prismic-dom';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
+import { useUtterances } from '../../hooks/useUtterances';
+
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
@@ -37,7 +39,10 @@ interface PostProps {
   post: Post;
 }
 
+const commentNodeId = 'comments';
+
 export default function Post({ post }: PostProps): JSX.Element {
+  useUtterances(commentNodeId);
   const router = useRouter();
 
   if (router.isFallback) {
@@ -96,6 +101,13 @@ export default function Post({ post }: PostProps): JSX.Element {
           </div>
         ))}
       </div>
+
+      <div>
+        <span>Anterior</span>
+        <span>Proximo</span>
+      </div>
+
+      <div className={styles.comments} id={commentNodeId} />
     </article>
   );
 }
