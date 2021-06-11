@@ -20,7 +20,7 @@
 
   .info {
     color: var(--gray-200);
-    
+
     span > span {
       margin-left: 0.65625rem;
     }
@@ -35,7 +35,7 @@
     padding-bottom: 3.75rem;
 
     border-bottom: 1px solid var(--gray-200);
-    
+
     div {
       h2 {
         font-size: 2rem;
@@ -55,10 +55,29 @@
         color: var(--pink-500);
       }
     }
-    
   }
 
   .comments {
     margin-top: 5rem;
+  }
+}
+
+.preview {
+  color: var(--black);
+  background-color: var(--white);
+  margin-bottom: 5rem;
+
+  font-weight: 600;
+  font-size: 1.125rem;
+
+  height: 3.625rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.25rem;
+
+  a {
+    text-decoration: none;
   }
 }

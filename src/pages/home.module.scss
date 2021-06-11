@@ -57,3 +57,24 @@
     }
   }
 }
+
+.preview {
+  display: block;
+  color: var(--black);
+  background-color: var(--white);
+  margin-bottom: 5rem;
+
+  font-weight: 600;
+  font-size: 1.125rem;
+
+  height: 3.625rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.25rem;
+
+  a {
+    text-decoration: none;
+  }
+}

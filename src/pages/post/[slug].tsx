@@ -17,6 +17,8 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import React from 'react';
+import Link from 'next/link';
 
 interface Post {
   first_publication_date: string | null;
@@ -37,11 +39,12 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
 const commentNodeId = 'comments';
 
-export default function Post({ post }: PostProps): JSX.Element {
+export default function Post({ post, preview }: PostProps): JSX.Element {
   useUtterances(commentNodeId);
   const router = useRouter();
 
@@ -65,50 +68,59 @@ export default function Post({ post }: PostProps): JSX.Element {
   }
 
   return (
-    <article className={styles.container}>
-      <img src={post.data.banner.url} alt={post.data.title} />
-      <h1>{post.data.title}</h1>
-      <div className={styles.info}>
-        <div>
-          <span>
-            <AiOutlineCalendar />
+    <>
+      <article className={styles.container}>
+        <img src={post.data.banner.url} alt={post.data.title} />
+        <h1>{post.data.title}</h1>
+        <div className={styles.info}>
+          <div>
             <span>
-              {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
-                locale: ptBR,
-              })}
+              <AiOutlineCalendar />
+              <span>
+                {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
+                  locale: ptBR,
+                })}
+              </span>
             </span>
-          </span>
-          <span>
-            <FiUser />
-            <span>{post.data.author}</span>
-          </span>
-          <span>
-            <FiClock />
-            <span>{getReadingTime()} min</span>
-          </span>
-        </div>
-      </div>
-      <div className={styles.content}>
-        {post.data.content.map(content => (
-          <div key={(Math.random() * 9999999).toString()}>
-            <h2>{content.heading}</h2>
-            <div
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{
-                __html: RichText.asHtml(content.body),
-              }}
-            />
+            <span>
+              <FiUser />
+              <span>{post.data.author}</span>
+            </span>
+            <span>
+              <FiClock />
+              <span>{getReadingTime()} min</span>
+            </span>
           </div>
-        ))}
-      </div>
+        </div>
+        <div className={styles.content}>
+          {post.data.content.map(content => (
+            <div key={(Math.random() * 9999999).toString()}>
+              <h2>{content.heading}</h2>
+              <div
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{
+                  __html: RichText.asHtml(content.body),
+                }}
+              />
+            </div>
+          ))}
+        </div>
 
-      <div>
-        <span>Anterior</span>
-        <span>Proximo</span>
-      </div>
+        <div>
+          <span>Anterior</span>
+          <span>Proximo</span>
+        </div>
 
-      <div className={styles.comments} id={commentNodeId} />
-    </article>
+        <div className={styles.comments} id={commentNodeId} />
+      </article>
+      {preview && (
+        <aside className={styles.preview}>
+          <Link href="/api/exit-preview">
+            <a>Sair do modo Preview</a>
+          </Link>
+        </aside>
+      )}
+    </>
   );
 }
 
@@ -138,10 +150,12 @@ export const getStaticProps: GetStaticProps = async context => {
   const response = await prismic.getByUID(
     'posts',
     String(context.params.slug),
-    {}
+    {
+      ref: context.previewData?.ref ?? null,
+    }
   );
 
   return {
-    props: { post: response },
+    props: { post: response, preview: context.preview },
   };
 };
