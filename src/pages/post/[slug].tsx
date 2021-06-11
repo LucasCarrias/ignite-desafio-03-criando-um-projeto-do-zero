@@ -1,3 +1,5 @@
+import React from 'react';
+import Link from 'next/link';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -17,8 +19,6 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import React from 'react';
-import Link from 'next/link';
 
 interface Post {
   first_publication_date: string | null;
@@ -37,14 +37,29 @@ interface Post {
   };
 }
 
+interface PostNavigation {
+  uid?: string;
+  slug: string;
+  data: {
+    title: string;
+  };
+}
+
 interface PostProps {
   post: Post;
   preview: boolean;
+  prevPost: PostNavigation | null;
+  nextPost: PostNavigation | null;
 }
 
 const commentNodeId = 'comments';
 
-export default function Post({ post, preview }: PostProps): JSX.Element {
+export default function Post({
+  post,
+  preview,
+  prevPost,
+  nextPost,
+}: PostProps): JSX.Element {
   useUtterances(commentNodeId);
   const router = useRouter();
 
@@ -106,13 +121,34 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
           ))}
         </div>
 
-        <div>
-          <span>Anterior</span>
-          <span>Proximo</span>
-        </div>
+        <hr />
 
+        <div className={styles.postNavigation}>
+          {prevPost === null ? (
+            <div />
+          ) : (
+            <Link href={`/post/${prevPost.uid}`}>
+              <div>
+                <span>{prevPost.data.title}</span>
+                <span>Post anterior</span>
+              </div>
+            </Link>
+          )}
+
+          {nextPost === null ? (
+            <div />
+          ) : (
+            <Link href={`/post/${nextPost.uid}`}>
+              <div>
+                <span>{nextPost.data.title}</span>
+                <span>Próximo post</span>
+              </div>
+            </Link>
+          )}
+        </div>
         <div className={styles.comments} id={commentNodeId} />
       </article>
+
       {preview && (
         <aside className={styles.preview}>
           <Link href="/api/exit-preview">
@@ -155,7 +191,35 @@ export const getStaticProps: GetStaticProps = async context => {
     }
   );
 
+  const nextResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response?.id,
+      orderings: '[document.first_publication_date desc]',
+      fetch: ['posts.title'],
+    }
+  );
+  const prevResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response?.id,
+      orderings: '[document.first_publication_date]',
+      fetch: ['posts.title'],
+    }
+  );
+  const nextPost = nextResponse?.results[0] || null;
+  const prevPost = prevResponse?.results[0] || null;
+
+  console.log(nextPost);
+
   return {
-    props: { post: response, preview: context.preview },
+    props: {
+      post: response,
+      preview: context.preview ?? false,
+      nextPost,
+      prevPost,
+    },
   };
 };
